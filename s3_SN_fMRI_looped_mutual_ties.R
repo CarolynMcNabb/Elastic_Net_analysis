@@ -302,58 +302,61 @@ save(list=c("plot", "LMEmodels","net_corr_vectors"),file = 'shiny_lists.RData')
 
 
 #meta-analysis outputs
-#library(metaforlmer)
-# library(metafor)
-# 
-# MAplotlist <- list()
-# MetaAnalysis <- list()
-# analyses <- names(LMEmodels[[1]][[1]])
-# for (t in model_type){
-#   MetaAnalysis[[t]] <- list()
-#   for (a in analyses){
-#     model_list <- list(LMEmodels[[t]][["Cohort 1"]][[a]],LMEmodels[[t]][["Cohort 3"]][[a]],LMEmodels[[t]][["Cohort 2"]][[a]])
-#     names(model_list) <- years 
-#     MetaAnalysis[[t]][[a]] <- meta_models(model_list = model_list)
-#     # MAplotlist[[t]][[a]] <- ggforest(MetaAnalysis)
-#     MAplotlist[[t]][[a]] <- metaforlmer::ggforest(MetaAnalysis[[t]][[a]], labels = paste(t,a))
-#     #MAplotlist[[t]][[a]] <- ggforest(data=MetaAnalysis[[t]][[a]], main = paste(t,a))#creates errors on my laptop
-#   }
-# }
-# 
-# whichPlot <- list(plot,MAplotlist)
-# names(whichPlot) <- c("plot","MAplotlist")
-# # save the relevant lists into an .RData file for easy loading
-# save(list=c("LMEmodels","whichPlot"),file = 'shiny_lists.RData')
-# 
-# ##################################################
-# 
-# #making plots for CNS conference poster
-# rbPal <- c("chartreuse","olivedrab1","yellow","thistle3","darkslategrey")
-# yrs <- c("Cohort 1","Cohort 2","Cohort 3") #have changed the order of this as well as the order of LMEmodels below
-# MAplotlist <- list()
-# #plotforest <- list()
-# MetaAnalysis <- list()
-# colour=1
-# analyses <- names(LMEmodels[[1]][[1]])
-# for (t in model_type){
-#   MetaAnalysis[[t]] <- list()
-#   for (a in analyses){
-#     model_list <- list(LMEmodels[[t]][["Cohort 1"]][[a]],LMEmodels[[t]][["Cohort 2"]][[a]],LMEmodels[[t]][["Cohort 3"]][[a]])
-#     names(model_list) <- yrs
-#     MetaAnalysis[[t]][[a]] <- meta_models(model_list = model_list)
-#     # MAplotlist[[t]][[a]] <- ggforest(MetaAnalysis)
-#     #MAplotlist[[t]][[a]] <- ggforest(data=MetaAnalysis[[t]][[a]], main = paste(a))
-#     MAplotlist[[t]][[a]] <- metaforlmer::ggforest(MetaAnalysis[[t]][[a]], labels = paste(a), palette = rbPal[colour])
-#     colour <- colour+1
-#   if (colour>12){colour <- 1}
-#     }
-# }
+library(devtools)
+install_github("https://github.com/LilyFG/metaforlmer.git")
 
-# plotlist_community <- list(MAplotlist[[1]][[1]],MAplotlist[[1]][[2]],MAplotlist[[1]][[3]],MAplotlist[[1]][[4]],MAplotlist[[1]][[5]])
-# multiplot(plotlist = plotlist_community, cols = 5)
-# 
-# plotlist_socialdist <- list(MAplotlist[[2]][[1]],MAplotlist[[2]][[2]],MAplotlist[[2]][[3]],MAplotlist[[2]][[4]],MAplotlist[[2]][[5]])
-# multiplot(plotlist = plotlist_socialdist, cols = 5)
+library(metaforlmer)
+library(metafor)
+
+MAplotlist <- list()
+MetaAnalysis <- list()
+analyses <- names(LMEmodels[[1]][[1]])
+for (t in model_type){
+  MetaAnalysis[[t]] <- list()
+  for (a in analyses){
+    model_list <- list(LMEmodels[[t]][["Cohort 1"]][[a]],LMEmodels[[t]][["Cohort 3"]][[a]],LMEmodels[[t]][["Cohort 2"]][[a]])
+    names(model_list) <- years
+    MetaAnalysis[[t]][[a]] <- meta_models(model_list = model_list)
+    # MAplotlist[[t]][[a]] <- ggforest(MetaAnalysis)
+    MAplotlist[[t]][[a]] <- metaforlmer::ggforest(MetaAnalysis[[t]][[a]], labels = paste(t,a))
+    #MAplotlist[[t]][[a]] <- ggforest(data=MetaAnalysis[[t]][[a]], main = paste(t,a))#creates errors on my laptop
+  }
+}
+
+whichPlot <- list(plot,MAplotlist)
+names(whichPlot) <- c("plot","MAplotlist")
+# save the relevant lists into an .RData file for easy loading
+save(list=c("LMEmodels","whichPlot"),file = 'shiny_lists.RData')
+
+##################################################
+
+#making plots for CNS conference poster
+rbPal <- c("chartreuse","olivedrab1","yellow","thistle3","darkslategrey")
+yrs <- c("Cohort 1","Cohort 2","Cohort 3") #have changed the order of this as well as the order of LMEmodels below
+MAplotlist <- list()
+#plotforest <- list()
+MetaAnalysis <- list()
+colour=1
+analyses <- names(LMEmodels[[1]][[1]])
+for (t in model_type){
+  MetaAnalysis[[t]] <- list()
+  for (a in analyses){
+    model_list <- list(LMEmodels[[t]][["Cohort 1"]][[a]],LMEmodels[[t]][["Cohort 2"]][[a]],LMEmodels[[t]][["Cohort 3"]][[a]])
+    names(model_list) <- yrs
+    MetaAnalysis[[t]][[a]] <- meta_models(model_list = model_list)
+    # MAplotlist[[t]][[a]] <- ggforest(MetaAnalysis)
+    #MAplotlist[[t]][[a]] <- ggforest(data=MetaAnalysis[[t]][[a]], main = paste(a))
+    MAplotlist[[t]][[a]] <- metaforlmer::ggforest(MetaAnalysis[[t]][[a]], labels = paste(a), palette = rbPal[colour])
+    colour <- colour+1
+  if (colour>12){colour <- 1}
+    }
+}
+
+plotlist_community <- list(MAplotlist[[1]][[1]],MAplotlist[[1]][[2]],MAplotlist[[1]][[3]],MAplotlist[[1]][[4]],MAplotlist[[1]][[5]])
+multiplot(plotlist = plotlist_community, cols = 5)
+
+plotlist_socialdist <- list(MAplotlist[[2]][[1]],MAplotlist[[2]][[2]],MAplotlist[[2]][[3]],MAplotlist[[2]][[4]],MAplotlist[[2]][[5]])
+multiplot(plotlist = plotlist_socialdist, cols = 5)
 ###########################
 setwd("F:\\0_parcellation_analysis/scripts-data-sharing/")
 write.csv(net_corr_vectors[["Cohort 1"]][["wholebrain"]]$distance, file = "cohort1_distance.csv", row.names = F)

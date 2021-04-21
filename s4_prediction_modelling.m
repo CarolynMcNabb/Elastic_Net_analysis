@@ -11,6 +11,28 @@ addpath(genpath('F:\0_parcellation_analysis\scripts-data-sharing\'))
 addpath(genpath('F:\BCT\'))
 %cd E:\FSLNets_stuff\deltacon\deltacon_matlab\GRAPHS
 cd F:\0_parcellation_analysis\scripts-data-sharing\
+%% part I - use parcel timeseries to build correlation matrices of whole-brain
+%connectivity
+Ns={201	204	210	211	213	216	217	218	219	220	222	223	224	226	227	232	233	240	244	245	246	247	256	300	302	305	307	308	309	312	315	317	318	321	322	325	332	333	334	335	340	344	346	347	350	352	355	361	366	367	369 702 704 706 708 709 711 713 715 720 722 737 739 742 743 745 748 751};
+all_corr=zeros(length(Ns),(272^2-272)/2);
+all_zs=zeros(length(Ns),(272^2-272)/2);
+
+for i=1:length(Ns)
+    ppt=(Ns{i});
+    name=sprintf('timeseries_rest_%d.txt', ppt);
+    ts=dlmread(name);
+    corr_ts=corr(ts');
+    corr_ts=corr_ts.*~eye(size(corr_ts));
+    %remove upper half of matrix
+    mask=tril(true(size(corr_ts)),-1);
+    vec=corr_ts(mask)';    
+%     eval(['corr_ts' num2str(ppt) '=corr_ts']);
+% %     vec=reshape(corr_ts',1,[]);
+%     eval(['vec_' num2str(ppt) '=vec']);
+    z=atanh(vec);%RtoZ transformation
+    all_corr(i,:)=vec;
+    all_zs(i,:)=z;
+end
 %% part II - Get difference in none-node correlation for each connection
 %between members of a dyad
 yL4=nan(23,1);
